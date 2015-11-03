@@ -1,0 +1,24 @@
+{
+  "name": "react-polling-app",
+  "version": "1.0.0",
+  "description": "A simple polling app with React.js",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Edgar Pino",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-loader": "^6.0.1",
+    "jsx-loader": "^0.13.2",
+    "react": "^0.14.2",
+    "react-hot-loader": "^1.3.0",
+    "react-router": "^0.13.5",
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.12.1"
+  },
+  "scripts" : {
+    "prestart": "webpack",
+    "start" : "node server.js"
+  }
+}
