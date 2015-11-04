@@ -1,8 +1,9 @@
 /**
  * Created by edgar971 on 11/3/15.
  */
-var express = require('express');
-var app = express();
+var express = require('express'),
+    app = express(),
+    connections = [];
 
 app.use(express.static('./public'));
 app.use(express.static('./node_modules/materialize-css/dist'));
@@ -14,7 +15,20 @@ var io = require('socket.io').listen(server);
 
 //when socket connects
 io.sockets.on('connection', function(socket){
-    console.log(socket.id);
+
+    //remove the socket when it disconnects
+    socket.once('disconnect', function(){
+        connections.splice(connections.indexOf(socket),1);
+        socket.disconnect();
+        console.log("DISCONNECTED: %s remaining", connections.length)
+    })
+    //push connection to array
+    connections.push(socket);
+
+    console.log("Connected: % sockets connected", connections.length);
+
 });
+
+
 
 console.log("server is running on port 3000");

@@ -19637,18 +19637,27 @@
 	var Header = __webpack_require__(209);
 
 	var APP = React.createClass({displayName: "APP",
+	    getInitialState:function() {
+	      return {
+	          status: 'warning'
+	      }
+	    },
 	    componentWillMount:function() {
 	        this.socket = io('http://localhost:3000');
-	        this.socket.on('connect', this.connect)
+	        this.socket.on('connect', this.connect);
+	        this.socket.on('disconnect', this.disconnect);
 	    },
 	    connect:function(event) {
 	        console.log(this.socket.id);
 	        console.log(this);
 	        console.log(event);
-
+	        this.setState({status: 'album'});
+	    },
+	    disconnect:function() {
+	        this.setState({status: 'warning'});
 	    },
 	    render:function() {
-	        return(React.createElement(Header, null));
+	        return(React.createElement(Header, {title: "App", status: this.state.status}));
 	    }
 	});
 
@@ -26988,18 +26997,25 @@
 	var React = __webpack_require__(1);
 
 	var Header = React.createClass({displayName: "Header",
+	    propTypes: {
+	        title: React.PropTypes.string.isRequired
+	    },
+	    getDefaultProps:function() {
+	        return {
+	            status: 'warning'
+	        }
+	    },
 	    render:function() {
 	        return(
 	            React.createElement("header", null, 
 	                React.createElement("nav", null, 
 	                    React.createElement("div", {className: "nav-wrapper"}, 
 	                        React.createElement("div", {className: "container"}, 
-	                        React.createElement("a", {href: "#", className: "brand-logo"}, "Logo"), 
-	                        React.createElement("ul", {id: "nav-mobile", className: "right hide-on-med-and-down"}, 
-	                            React.createElement("li", null, React.createElement("a", {href: "sass.html"}, "Sass")), 
-	                            React.createElement("li", null, React.createElement("a", {href: "badges.html"}, "Components")), 
-	                            React.createElement("li", null, React.createElement("a", {href: "collapsible.html"}, "JavaScript"))
-	                        )
+	                        React.createElement("a", {href: "#", className: "brand-logo"}, this.props.title), 
+	                            React.createElement("ul", {className: "right hide-on-med-and-down"}, 
+
+	                                React.createElement("li", null, React.createElement("a", {href: "mobile.html"}, React.createElement("i", {className: "material-icons"}, this.props.status)))
+	                            )
 	                        )
 	                    )
 	                )
