@@ -3,8 +3,10 @@
  */
 var express = require('express'),
     app = express(),
+    _ = require('underscore'),
     title = "Untitled Presentation",
-    connections = [];
+    connections = [],
+    audience = [];
 
 
 app.use(express.static('./public'));
@@ -20,6 +22,15 @@ io.sockets.on('connection', function(socket){
 
     //remove the socket when it disconnects
     socket.once('disconnect', function(){
+        //find member id on the array using underscore.
+        var member = _.findWhere(audience, {id: this.id});
+
+        //if one was found
+        if(member) {
+            audience.splice(audience.indexOf(member),1);
+            io.sockets.emit('audience', audience);
+            console.log("Left: %s (%s audience members)", member.name, audience.length);
+        }
         connections.splice(connections.indexOf(socket),1);
         socket.disconnect();
         console.log("DISCONNECTED: %s remaining", connections.length)
@@ -27,6 +38,18 @@ io.sockets.on('connection', function(socket){
 
     //push connection to array
     connections.push(socket);
+
+    //when someone joins
+    socket.on('join', function(data){
+        var newMember = {
+            id: this.id,
+            name: data.name
+        };
+        this.emit('joined', newMember);
+        audience.push(newMember);
+        io.sockets.emit('audience', audience);
+        console.log("Audience Joined: %s", data.name);
+    });
 
     //emit a connection
     socket.emit('welcome', {

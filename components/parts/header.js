@@ -9,7 +9,7 @@ var Header = React.createClass({
     },
     getDefaultProps() {
         return {
-            status: 'warning'
+            status: 'disconnected'
         }
     },
     render() {
@@ -20,8 +20,7 @@ var Header = React.createClass({
                         <div className="container">
                         <a href="#" className="brand-logo">{this.props.title}</a>
                             <ul className="right hide-on-med-and-down">
-
-                                <li><a href="mobile.html"><i className="material-icons">{this.props.status}</i></a></li>
+                                <li><a href="mobile.html"><i className="material-icons">{(this.props.status === 'disconnected') ? "signal_wifi_off" : "wifi_tethering"}</i></a></li>
                             </ul>
                         </div>
                     </div>
