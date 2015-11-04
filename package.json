@@ -4,7 +4,8 @@
   "description": "A simple polling app with React.js",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "webpack",
+    "start": "node server.js"
   },
   "author": "Edgar Pino",
   "license": "ISC",
@@ -17,8 +18,8 @@
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.12.1"
   },
-  "scripts" : {
-    "prestart": "webpack",
-    "start" : "node server.js"
+  "dependencies": {
+    "socket.io": "^1.3.7",
+    "socket.io-client": "^1.3.7"
   }
 }
