@@ -6,7 +6,8 @@ var express = require('express'),
     _ = require('underscore'),
     title = "Untitled Presentation",
     connections = [],
-    audience = [];
+    audience = [],
+    speaker = {};
 
 
 app.use(express.static('./public'));
@@ -43,14 +44,25 @@ io.sockets.on('connection', function(socket){
     socket.on('join', function(data){
         var newMember = {
             id: this.id,
-            name: data.name
+            name: data.name,
+            type: "member"
         };
+
         this.emit('joined', newMember);
         audience.push(newMember);
         io.sockets.emit('audience', audience);
         console.log("Audience Joined: %s", data.name);
     });
 
+    //when there is a speaker
+    socket.on('start', function(data){
+        speaker.name = data.name;
+        speaker.id = this.id;
+        speaker.type = "speaker";
+        this.emit('joined', speaker);
+        console.log("Presenter Joined: %s", speaker.name);
+
+    });
     //emit a connection
     socket.emit('welcome', {
         title: title

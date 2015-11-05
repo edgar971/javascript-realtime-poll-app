@@ -1,5 +1,6 @@
 var React = require('react'),
     ReactDOM = require('react-dom'),
+    Link = require('react-router').Link,
     Join;
 
 Join = React.createClass({
@@ -16,6 +17,7 @@ Join = React.createClass({
                         <label className="active" >Name</label>
                     </div>
                 </div>
+                <Link to="/speaker">Join as Speaker</Link>
 
             </form>
 

@@ -1,3 +1,6 @@
+/*
+Main App
+ */
 var React = require('react'),
     io = require('socket.io-client'),
     Header = require('./parts/Header'),
@@ -11,7 +14,8 @@ APP = React.createClass({
           status: 'warning',
           title: '',
           member: {},
-          audience: []
+          audience: [],
+          speaker: {}
       }
     },
     componentWillMount() {
