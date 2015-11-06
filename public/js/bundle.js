@@ -56,8 +56,8 @@
 	    NotFoundRoute = Router.NotFoundRoute,
 	    Audience = __webpack_require__(253),
 	    Speaker = __webpack_require__(256),
-	    Board = __webpack_require__(258),
-	    Page404 = __webpack_require__(259),
+	    Board = __webpack_require__(260),
+	    Page404 = __webpack_require__(261),
 	    routes;
 
 
@@ -19671,16 +19671,19 @@
 	          title: '',
 	          member: {},
 	          audience: [],
-	          speaker: {}
+	          speaker: '',
+	          questions: []
 	      }
 	    },
 	    componentWillMount:function() {
 	        this.socket = io('http://localhost:3000');
 	        this.socket.on('connect', this.connect);
 	        this.socket.on('disconnect', this.disconnect);
-	        this.socket.on('welcome', this.welcome);
+	        this.socket.on('welcome', this.updateState);
 	        this.socket.on('joined', this.joined);
 	        this.socket.on('audience', this.updateAudience);
+	        this.socket.on('start', this.start);
+	        this.socket.on('end', this.updateState);
 	    },
 	    emit:function(event,data) {
 	      this.socket.emit(event,data);
@@ -19688,16 +19691,22 @@
 	    connect:function(event) {
 	        var member = (sessionStorage.member) ? JSON.parse(sessionStorage.member) : null;
 
-	        if(member) {
+	        if(member && member.type === 'audience') {
 	            this.emit('join', member);
+	        } else if(member && member.type === 'speaker') {
+	            this.emit('start', {name: member.name, title: sessionStorage.title});
 	        }
 	        this.setState({status: 'connected'});
 	    },
 	    disconnect:function() {
-	        this.setState({status: 'disconnected'});
+	        this.setState({
+	            status: 'disconnected',
+	            title: 'disconnected',
+	            speaker: ''
+	        });
 	    },
-	    welcome:function(serverState) {
-	        this.setState({title: serverState.title});
+	    updateState:function(serverState) {
+	        this.setState(serverState);
 	    },
 	    joined:function(member) {
 	        //set member variable to what ever information comes from the server
@@ -19707,10 +19716,16 @@
 	    updateAudience:function(newAudience) {
 	        this.setState({audience: newAudience});
 	    },
+	    start:function(presentation) {
+	        if(this.state.member.type === 'speaker') {
+	            sessionStorage.title = presentation.title;
+	        }
+	        this.setState(presentation);
+	    },
 	    render:function() {
 	        return(
 	            React.createElement("div", null, 
-	                React.createElement(Header, {title: this.state.title, status: this.state.status}), 
+	                React.createElement(Header, React.__spread({},  this.state)), 
 	                React.createElement(RouteHandler, React.__spread({emit: this.emit},  this.state))
 	            )
 	        );
@@ -27068,7 +27083,7 @@
 	                React.createElement("nav", null, 
 	                    React.createElement("div", {className: "nav-wrapper"}, 
 	                        React.createElement("div", {className: "container"}, 
-	                        React.createElement("a", {href: "#", className: "brand-logo"}, this.props.title), 
+	                        React.createElement("a", {href: "#", className: "brand-logo"}, this.props.title, " | ", this.props.speaker), 
 	                            React.createElement("ul", {className: "right hide-on-med-and-down"}, 
 	                                React.createElement("li", null, React.createElement("a", {href: "mobile.html"}, React.createElement("i", {className: "material-icons"}, (this.props.status === 'disconnected') ? "signal_wifi_off" : "wifi_tethering")))
 	                            )
@@ -30424,6 +30439,8 @@
 	/** @jsx React.DOM */var React = __webpack_require__(1),
 	    Display = __webpack_require__(254),
 	    JoinSpeaker = __webpack_require__(257),
+	    Attendance = __webpack_require__(258),
+	    Questions = __webpack_require__(259),
 	    Speaker;
 
 	Speaker = React.createClass({displayName: "Speaker",
@@ -30432,8 +30449,8 @@
 	               React.createElement("section", {className: "container"}, 
 	                    React.createElement(Display, {if: this.props.status === 'connected'}, 
 	                        React.createElement(Display, {if: this.props.member.name && this.props.member.type === 'speaker'}, 
-	                            React.createElement("p", null, "Questions"), 
-	                            React.createElement("p", null, "Attendance")
+	                            React.createElement(Questions, {questions: this.props.questions}), 
+	                            React.createElement(Attendance, {audience: this.props.audience})
 	                        ), 
 	                        React.createElement(Display, {if: !this.props.member.name}, 
 	                            React.createElement("h2", null, "Start Presentation"), 
@@ -30460,6 +30477,7 @@
 	    start:function() {
 	        var speakerName = ReactDOM.findDOMNode(this.refs.name).value;
 	        var title = ReactDOM.findDOMNode(this.refs.title).value;
+	        console.log(title);
 	        this.props.emit('start',{name: speakerName, title: title});
 	    },
 	    render:function() {
@@ -30490,6 +30508,77 @@
 /* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/** @jsx React.DOM *//**
+	 * Created by edgar971 on 11/5/15.
+	 */
+	var React = __webpack_require__(1),
+	    Attendance;
+
+	Attendance = React.createClass({displayName: "Attendance",
+	    addMemberRow:function(member,i) {
+	      return(
+	          React.createElement("tr", {key: i}, 
+	              React.createElement("td", null, member.name), 
+	              React.createElement("td", null, member.id)
+	          )
+	      )
+	    },
+	    render:function() {
+	        return(
+	            React.createElement("section", null, 
+	                React.createElement("h2", null, "Attendance - ", this.props.audience.length, " members"), 
+	                React.createElement("ul", null, 
+	                    React.createElement("table", {className: "responsive-table"}, 
+	                        React.createElement("thead", null, 
+	                        React.createElement("tr", null, 
+	                            React.createElement("th", {"data-field": "name"}, "Name"), 
+	                            React.createElement("th", {"data-field": "id"}, "Socket ID")
+	                        )
+	                        ), 
+	                        React.createElement("tbody", null, 
+	                        this.props.audience.map(this.addMemberRow)
+	                        )
+	                    )
+	                )
+	            )
+	        )
+	    }
+	});
+
+	module.exports = Attendance;
+
+/***/ },
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/** @jsx React.DOM */var React = __webpack_require__(1),
+	    Questions;
+
+	Questions = React.createClass({displayName: "Questions",
+	    askQuestion:function(question){
+	        this.props.emit('ask', question);
+	    },
+	    addQuestion:function(question,i) {
+	        return(
+	            React.createElement("li", {key: i, className: "collection-item"}, React.createElement("div", null, question.q, React.createElement("a", {href: "#!", className: "secondary-content"}, React.createElement("i", {className: "material-icons"}, "question_answer"))))
+	        )
+	    },
+	    render:function(){
+	        return(
+	            React.createElement("ul", {className: "collection with-header"}, 
+	                React.createElement("li", {className: "collection-header"}, React.createElement("h4", null, "Questions")), 
+	                this.props.questions.map(this.addQuestion)
+	            )
+	        )
+	    }
+	})
+
+	module.exports = Questions;
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/** @jsx React.DOM */var React = __webpack_require__(1),
 	    Board = React.createClass({displayName: "Board",
 	       render:function() {
@@ -30501,7 +30590,7 @@
 	module.exports = Board;
 
 /***/ },
-/* 259 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */var React = __webpack_require__(1),

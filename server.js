@@ -4,10 +4,12 @@
 var express = require('express'),
     app = express(),
     _ = require('underscore'),
-    title = "Untitled Presentation",
+    title = "No Presentation",
+    questions = require('./questions'),
     connections = [],
     audience = [],
-    speaker = {};
+    speaker = {},
+    currentQuestion;
 
 
 app.use(express.static('./public'));
@@ -31,6 +33,11 @@ io.sockets.on('connection', function(socket){
             audience.splice(audience.indexOf(member),1);
             io.sockets.emit('audience', audience);
             console.log("Left: %s (%s audience members)", member.name, audience.length);
+        } else if(this.id === speaker.id) {
+            console.log("%s has left. ", speaker.name);
+            speaker = {};
+            title = 'No Presentation';
+            io.sockets.emit('end', {title: title, speaker: ''});
         }
         connections.splice(connections.indexOf(socket),1);
         socket.disconnect();
@@ -59,15 +66,21 @@ io.sockets.on('connection', function(socket){
         speaker.name = data.name;
         speaker.id = this.id;
         speaker.type = "speaker";
+        title = data.title;
         this.emit('joined', speaker);
+        io.sockets.emit('start', {title: title, speaker: speaker.name});
         console.log("Presenter Joined: %s", speaker.name);
 
     });
     //emit a connection
     socket.emit('welcome', {
-        title: title
+        title: title,
+        audience: audience,
+        speaker: speaker.name,
+        questions: questions,
+        currentQuestion: currentQuestion
     });
-    console.log("Connected: % sockets connected", connections.length);
+    console.log("Connected: %s sockets connected", connections.length);
 
 });
 

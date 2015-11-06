@@ -18,7 +18,7 @@ var Header = React.createClass({
                 <nav>
                     <div className="nav-wrapper">
                         <div className="container">
-                        <a href="#" className="brand-logo">{this.props.title}</a>
+                        <a href="#" className="brand-logo">{this.props.title} | {this.props.speaker}</a>
                             <ul className="right hide-on-med-and-down">
                                 <li><a href="mobile.html"><i className="material-icons">{(this.props.status === 'disconnected') ? "signal_wifi_off" : "wifi_tethering"}</i></a></li>
                             </ul>
