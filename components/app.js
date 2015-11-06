@@ -33,6 +33,7 @@ APP = React.createClass({
       this.socket.emit(event,data);
     },
     connect(event) {
+        console.log('welcome');
         var member = (sessionStorage.member) ? JSON.parse(sessionStorage.member) : null;
 
         if(member && member.type === 'audience') {

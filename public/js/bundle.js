@@ -19689,6 +19689,7 @@
 	      this.socket.emit(event,data);
 	    },
 	    connect:function(event) {
+	        console.log('welcome');
 	        var member = (sessionStorage.member) ? JSON.parse(sessionStorage.member) : null;
 
 	        if(member && member.type === 'audience') {
@@ -30449,7 +30450,7 @@
 	               React.createElement("section", {className: "container"}, 
 	                    React.createElement(Display, {if: this.props.status === 'connected'}, 
 	                        React.createElement(Display, {if: this.props.member.name && this.props.member.type === 'speaker'}, 
-	                            React.createElement(Questions, {questions: this.props.questions}), 
+	                            React.createElement(Questions, {questions: this.props.questions, emit: this.props.emit}), 
 	                            React.createElement(Attendance, {audience: this.props.audience})
 	                        ), 
 	                        React.createElement(Display, {if: !this.props.member.name}, 
@@ -30560,7 +30561,7 @@
 	    },
 	    addQuestion:function(question,i) {
 	        return(
-	            React.createElement("li", {key: i, className: "collection-item"}, React.createElement("div", null, question.q, React.createElement("a", {href: "#!", className: "secondary-content"}, React.createElement("i", {className: "material-icons"}, "question_answer"))))
+	            React.createElement("li", {key: i, className: "collection-item"}, React.createElement("div", null, question.q, React.createElement("a", {href: "#!", onClick: this.askQuestion.bind(null,question), className: "secondary-content"}, React.createElement("i", {className: "material-icons"}, "question_answer"))))
 	        )
 	    },
 	    render:function(){
