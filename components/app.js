@@ -1,5 +1,5 @@
 /*
-Main App
+Main React App.
  */
 var React = require('react'),
     io = require('socket.io-client'),
@@ -20,9 +20,18 @@ APP = React.createClass({
       }
     },
     componentWillMount() {
+        //Happens when the component renders
+
+        //Connect to the socket.
         this.socket = io('http://localhost:3000');
+
+        //when there is a connection run the function
         this.socket.on('connect', this.connect);
+
+        //when a socket disconnects
         this.socket.on('disconnect', this.disconnect);
+
+        //when a person joins
         this.socket.on('welcome', this.updateState);
         this.socket.on('joined', this.joined);
         this.socket.on('audience', this.updateAudience);
@@ -33,9 +42,12 @@ APP = React.createClass({
       this.socket.emit(event,data);
     },
     connect(event) {
-        console.log('welcome');
+        /*
+        When someone connects then check if there is any local data otherwise return nothing
+         */
         var member = (sessionStorage.member) ? JSON.parse(sessionStorage.member) : null;
 
+        //if the type is audience then emit a join event with the persons information.
         if(member && member.type === 'audience') {
             this.emit('join', member);
         } else if(member && member.type === 'speaker') {
