@@ -19739,7 +19739,9 @@
 	    },
 	    ask:function(question) {
 	        console.log('Setting the state:', question);
+	        sessionStorage.answer = '';
 	        this.setState({currentQuestion : question});
+
 	    },
 	    render:function() {
 	        return(
@@ -30463,6 +30465,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */var React = __webpack_require__(1),
+	    Display = __webpack_require__(254),
 	    Ask;
 
 	Ask = React.createClass({displayName: "Ask",
@@ -30483,14 +30486,18 @@
 	    setUpChoices:function() {
 	        var choices = Object.keys(this.props.question);
 	        choices.shift();
-	        this.setState({choices: choices});
+	        this.setState({
+	            choices: choices,
+	            answer: sessionStorage.answer
+	        });
+
 	    },
 	    select:function(choice) {
 	        console.log(this);
 	        this.setState({answer: choice});
 	        sessionStorage.answer = choice;
 	        this.props.emit('answer',{
-	            question: this.prop.question,
+	            question: this.props.question,
 	            choice: choice
 	        });
 	    },
@@ -30504,9 +30511,15 @@
 	    render:function() {
 	        return(
 	            React.createElement("section", null, 
-	                React.createElement("h3", null, this.props.question.q), 
-	                React.createElement("div", null, 
-	                    this.state.choices.map(this.addChoiceButton)
+	                React.createElement(Display, {if: this.state.answer}, 
+	                    React.createElement("h3", null, "You answered: ", this.state.answer), 
+	                    React.createElement("p", null, this.props.question[this.state.answer])
+	                ), 
+	                React.createElement(Display, {if: !this.state.answer}, 
+	                    React.createElement("h3", null, this.props.question.q), 
+	                    React.createElement("div", null, 
+	                        this.state.choices.map(this.addChoiceButton)
+	                    )
 	                )
 	            )
 	        )

@@ -1,4 +1,5 @@
 var React = require('react'),
+    Display = require('./Display'),
     Ask;
 
 Ask = React.createClass({
@@ -19,7 +20,11 @@ Ask = React.createClass({
     setUpChoices() {
         var choices = Object.keys(this.props.question);
         choices.shift();
-        this.setState({choices: choices});
+        this.setState({
+            choices: choices,
+            answer: sessionStorage.answer
+        });
+
     },
     select(choice) {
         console.log(this);
@@ -40,10 +45,16 @@ Ask = React.createClass({
     render() {
         return(
             <section>
-                <h3>{this.props.question.q}</h3>
-                <div>
-                    {this.state.choices.map(this.addChoiceButton)}
-                </div>
+                <Display if={this.state.answer}>
+                    <h3>You answered: {this.state.answer}</h3>
+                    <p>{this.props.question[this.state.answer]}</p>
+                </Display>
+                <Display if={!this.state.answer}>
+                    <h3>{this.props.question.q}</h3>
+                    <div>
+                        {this.state.choices.map(this.addChoiceButton)}
+                    </div>
+                </Display>
             </section>
         )
     }
