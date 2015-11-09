@@ -9,7 +9,13 @@ var express = require('express'),
     connections = [],
     audience = [],
     speaker = {},
-    currentQuestion;
+    currentQuestion,
+    results = {
+        a:0,
+        b:0,
+        c:0,
+        d:0
+    };
 
 
 
@@ -76,8 +82,15 @@ io.sockets.on('connection', function(socket){
     //when a speaker asks a question
     socket.on('ask', function(question){
         currentQuestion = question;
+        //reset on new question
+        results = {a:0, b:0, c:0, d:0};
         io.sockets.emit('ask', currentQuestion);
         console.log("Question asked: '%s'", question.q);
+    });
+    //when someone answers
+    socket.on('answer', function(data){
+        results[data.choice] ++;
+        console.log("Answer: %s - %i", data.choice, results);
     });
     //emit a connection
     socket.emit('welcome', {

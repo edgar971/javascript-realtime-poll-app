@@ -4,7 +4,8 @@ var React = require('react'),
 Ask = React.createClass({
     getInitialState() {
         return {
-            choices: []
+            choices: [],
+            answer: undefined
         }
     },
     componentWillMount(){
@@ -20,9 +21,18 @@ Ask = React.createClass({
         choices.shift();
         this.setState({choices: choices});
     },
+    select(choice) {
+        console.log(this);
+        this.setState({answer: choice});
+        sessionStorage.answer = choice;
+        this.props.emit('answer',{
+            question: this.props.question,
+            choice: choice
+        });
+    },
     addChoiceButton(choice, i){
         return(
-            <button key={i}>
+            <button key={i} onClick={this.select.bind(null, choice)} className="waves-effect waves-light btn-large">
                 {choice}: {this.props.question[choice]}
             </button>
         );

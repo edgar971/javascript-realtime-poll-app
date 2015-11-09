@@ -30387,7 +30387,7 @@
 	                            React.createElement("p", null, "Questions will appear here.")
 	                        ), 
 	                        React.createElement(Display, {if: this.props.currentQuestion}, 
-	                            React.createElement(Ask, {question: this.props.currentQuestion})
+	                            React.createElement(Ask, {question: this.props.currentQuestion, emit: this.props.emit})
 	                        )
 
 	                        ), 
@@ -30468,7 +30468,8 @@
 	Ask = React.createClass({displayName: "Ask",
 	    getInitialState:function() {
 	        return {
-	            choices: []
+	            choices: [],
+	            answer: undefined
 	        }
 	    },
 	    componentWillMount:function(){
@@ -30484,9 +30485,18 @@
 	        choices.shift();
 	        this.setState({choices: choices});
 	    },
+	    select:function(choice) {
+	        console.log(this);
+	        this.setState({answer: choice});
+	        sessionStorage.answer = choice;
+	        this.props.emit('answer',{
+	            question: this.prop.question,
+	            choice: choice
+	        });
+	    },
 	    addChoiceButton:function(choice, i){
 	        return(
-	            React.createElement("button", {key: i}, 
+	            React.createElement("button", {key: i, onClick: this.select.bind(null, choice), className: "waves-effect waves-light btn-large"}, 
 	                choice, ": ", this.props.question[choice]
 	            )
 	        );
