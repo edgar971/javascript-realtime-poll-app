@@ -16,7 +16,8 @@ APP = React.createClass({
           member: {},
           audience: [],
           speaker: '',
-          questions: []
+          questions: [],
+          currentQuestion: false
       }
     },
     componentWillMount() {
@@ -37,6 +38,7 @@ APP = React.createClass({
         this.socket.on('audience', this.updateAudience);
         this.socket.on('start', this.start);
         this.socket.on('end', this.updateState);
+        this.socket.on('ask', this.ask);
     },
     emit(event,data) {
       this.socket.emit(event,data);
@@ -78,6 +80,10 @@ APP = React.createClass({
             sessionStorage.title = presentation.title;
         }
         this.setState(presentation);
+    },
+    ask(question) {
+        console.log('Setting the state:', question);
+        this.setState({currentQuestion : question});
     },
     render() {
         return(

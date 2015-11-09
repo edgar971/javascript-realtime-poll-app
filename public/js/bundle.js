@@ -55,9 +55,9 @@
 	    DefaultRoute = Router.DefaultRoute,
 	    NotFoundRoute = Router.NotFoundRoute,
 	    Audience = __webpack_require__(253),
-	    Speaker = __webpack_require__(256),
-	    Board = __webpack_require__(260),
-	    Page404 = __webpack_require__(261),
+	    Speaker = __webpack_require__(257),
+	    Board = __webpack_require__(261),
+	    Page404 = __webpack_require__(262),
 	    routes;
 
 
@@ -19655,7 +19655,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM *//*
-	Main App
+	Main React App.
 	 */
 	var React = __webpack_require__(1),
 	    io = __webpack_require__(159),
@@ -19672,26 +19672,40 @@
 	          member: {},
 	          audience: [],
 	          speaker: '',
-	          questions: []
+	          questions: [],
+	          currentQuestion: false
 	      }
 	    },
 	    componentWillMount:function() {
+	        //Happens when the component renders
+
+	        //Connect to the socket.
 	        this.socket = io('http://localhost:3000');
+
+	        //when there is a connection run the function
 	        this.socket.on('connect', this.connect);
+
+	        //when a socket disconnects
 	        this.socket.on('disconnect', this.disconnect);
+
+	        //when a person joins
 	        this.socket.on('welcome', this.updateState);
 	        this.socket.on('joined', this.joined);
 	        this.socket.on('audience', this.updateAudience);
 	        this.socket.on('start', this.start);
 	        this.socket.on('end', this.updateState);
+	        this.socket.on('ask', this.ask);
 	    },
 	    emit:function(event,data) {
 	      this.socket.emit(event,data);
 	    },
 	    connect:function(event) {
-	        console.log('welcome');
+	        /*
+	        When someone connects then check if there is any local data otherwise return nothing
+	         */
 	        var member = (sessionStorage.member) ? JSON.parse(sessionStorage.member) : null;
 
+	        //if the type is audience then emit a join event with the persons information.
 	        if(member && member.type === 'audience') {
 	            this.emit('join', member);
 	        } else if(member && member.type === 'speaker') {
@@ -19722,6 +19736,10 @@
 	            sessionStorage.title = presentation.title;
 	        }
 	        this.setState(presentation);
+	    },
+	    ask:function(question) {
+	        console.log('Setting the state:', question);
+	        this.setState({currentQuestion : question});
 	    },
 	    render:function() {
 	        return(
@@ -30354,6 +30372,7 @@
 	/** @jsx React.DOM */var React = __webpack_require__(1),
 	    Display = __webpack_require__(254),
 	    Join = __webpack_require__(255),
+	    Ask = __webpack_require__(256),
 	    Audience;
 
 	Audience = React.createClass({displayName: "Audience",
@@ -30362,10 +30381,16 @@
 	            React.createElement("section", {className: "container"}, 
 	                React.createElement(Display, {if: this.props.status === 'connected'}, 
 	                    React.createElement(Display, {if: this.props.member.name}, 
-	                        React.createElement("h2", null, "Welcome ", this.props.member.name), 
-	                        React.createElement("p", null, this.props.audience.length, " audience members connected."), 
-	                        React.createElement("p", null, "Questions will appear here.")
-	                    ), 
+	                        React.createElement(Display, {if: !this.props.currentQuestion}, 
+	                            React.createElement("h2", null, "Welcome ", this.props.member.name), 
+	                            React.createElement("p", null, this.props.audience.length, " audience members connected."), 
+	                            React.createElement("p", null, "Questions will appear here.")
+	                        ), 
+	                        React.createElement(Display, {if: this.props.currentQuestion}, 
+	                            React.createElement(Ask, {question: this.props.currentQuestion})
+	                        )
+
+	                        ), 
 	                    React.createElement(Display, {if: !this.props.member.name}, 
 	                        React.createElement("h2", null, "Join the session"), 
 	                        React.createElement(Join, {emit: this.props.emit})
@@ -30438,10 +30463,57 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */var React = __webpack_require__(1),
+	    Ask;
+
+	Ask = React.createClass({displayName: "Ask",
+	    getInitialState:function() {
+	        return {
+	            choices: []
+	        }
+	    },
+	    componentWillMount:function(){
+	        this.setUpChoices();
+	        console.log(this.props.question);
+
+	    },
+	    componentWillReceiveProps:function() {
+	        this.setUpChoices()
+	    },
+	    setUpChoices:function() {
+	        var choices = Object.keys(this.props.question);
+	        choices.shift();
+	        this.setState({choices: choices});
+	    },
+	    addChoiceButton:function(choice, i){
+	        return(
+	            React.createElement("button", {key: i}, 
+	                choice, ": ", this.props.question[choice]
+	            )
+	        );
+	    },
+	    render:function() {
+	        return(
+	            React.createElement("section", null, 
+	                React.createElement("h3", null, this.props.question.q), 
+	                React.createElement("div", null, 
+	                    this.state.choices.map(this.addChoiceButton)
+	                )
+	            )
+	        )
+	    }
+	})
+
+	module.exports = Ask;
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/** @jsx React.DOM */var React = __webpack_require__(1),
 	    Display = __webpack_require__(254),
-	    JoinSpeaker = __webpack_require__(257),
-	    Attendance = __webpack_require__(258),
-	    Questions = __webpack_require__(259),
+	    JoinSpeaker = __webpack_require__(258),
+	    Attendance = __webpack_require__(259),
+	    Questions = __webpack_require__(260),
 	    Speaker;
 
 	Speaker = React.createClass({displayName: "Speaker",
@@ -30467,7 +30539,7 @@
 	module.exports = Speaker;
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */var React = __webpack_require__(1),
@@ -30506,7 +30578,7 @@
 
 
 /***/ },
-/* 258 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM *//**
@@ -30549,7 +30621,7 @@
 	module.exports = Attendance;
 
 /***/ },
-/* 259 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */var React = __webpack_require__(1),
@@ -30558,10 +30630,11 @@
 	Questions = React.createClass({displayName: "Questions",
 	    askQuestion:function(question){
 	        this.props.emit('ask', question);
+	        console.log(question);
 	    },
 	    addQuestion:function(question,i) {
 	        return(
-	            React.createElement("li", {key: i, className: "collection-item"}, React.createElement("div", null, question.q, React.createElement("a", {href: "#!", onClick: this.askQuestion.bind(null,question), className: "secondary-content"}, React.createElement("i", {className: "material-icons"}, "question_answer"))))
+	            React.createElement("li", {key: i, className: "collection-item"}, React.createElement("div", null, question.q, React.createElement("a", {onClick: this.askQuestion.bind(null,question), className: "secondary-content"}, React.createElement("i", {className: "material-icons"}, "question_answer"))))
 	        )
 	    },
 	    render:function(){
@@ -30577,7 +30650,7 @@
 	module.exports = Questions;
 
 /***/ },
-/* 260 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */var React = __webpack_require__(1),
@@ -30591,7 +30664,7 @@
 	module.exports = Board;
 
 /***/ },
-/* 261 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */var React = __webpack_require__(1),

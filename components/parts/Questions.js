@@ -4,10 +4,11 @@ var React = require('react'),
 Questions = React.createClass({
     askQuestion(question){
         this.props.emit('ask', question);
+        console.log(question);
     },
     addQuestion(question,i) {
         return(
-            <li key={i} className="collection-item"><div>{question.q}<a href="#!" onClick={this.askQuestion.bind(null,question)} className="secondary-content"><i className="material-icons">question_answer</i></a></div></li>
+            <li key={i} className="collection-item"><div>{question.q}<a onClick={this.askQuestion.bind(null,question)} className="secondary-content"><i className="material-icons">question_answer</i></a></div></li>
         )
     },
     render(){
