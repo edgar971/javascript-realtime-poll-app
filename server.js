@@ -90,6 +90,7 @@ io.sockets.on('connection', function(socket){
     //when someone answers
     socket.on('answer', function(data){
         results[data.choice] ++;
+        io.sockets.emit('results', results);
         console.log("Answer: %s - %i", data.choice, results);
     });
     //emit a connection
@@ -98,7 +99,8 @@ io.sockets.on('connection', function(socket){
         audience: audience,
         speaker: speaker.name,
         questions: questions,
-        currentQuestion: currentQuestion
+        currentQuestion: currentQuestion,
+        results: results
     });
     console.log("Connected: %s sockets connected", connections.length);
 

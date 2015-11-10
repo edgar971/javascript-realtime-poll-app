@@ -18,6 +18,7 @@ Join = React.createClass({
                     </div>
                 </div>
                 <Link to="/speaker">Join as Speaker</Link>
+                <Link to="/board">View board</Link>
 
             </form>
 

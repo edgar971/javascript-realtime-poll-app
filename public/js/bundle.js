@@ -19673,7 +19673,8 @@
 	          audience: [],
 	          speaker: '',
 	          questions: [],
-	          currentQuestion: false
+	          currentQuestion: false,
+	          results: {},
 	      }
 	    },
 	    componentWillMount:function() {
@@ -19695,6 +19696,7 @@
 	        this.socket.on('start', this.start);
 	        this.socket.on('end', this.updateState);
 	        this.socket.on('ask', this.ask);
+	        this.socket.on('results', this.updateResults);
 	    },
 	    emit:function(event,data) {
 	      this.socket.emit(event,data);
@@ -19742,6 +19744,9 @@
 	        sessionStorage.answer = '';
 	        this.setState({currentQuestion : question});
 
+	    },
+	    updateResults:function(data) {
+	        this.setState({results:data});
 	    },
 	    render:function() {
 	        return(
@@ -30448,7 +30453,8 @@
 	                        React.createElement("label", {className: "active"}, "Name")
 	                    )
 	                ), 
-	                React.createElement(Link, {to: "/speaker"}, "Join as Speaker")
+	                React.createElement(Link, {to: "/speaker"}, "Join as Speaker"), 
+	                React.createElement(Link, {to: "/board"}, "View board")
 
 	            )
 
@@ -30677,9 +30683,23 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @jsx React.DOM */var React = __webpack_require__(1),
+	    Display = __webpack_require__(254),
 	    Board = React.createClass({displayName: "Board",
 	       render:function() {
-	           return (React.createElement("h1", null, "Board"));
+	           return (
+	               React.createElement("section", {className: "container"}, 
+
+	                   React.createElement(Display, {if: this.props.status === 'connected' && this.props.currentQuestion}, 
+	                    React.createElement("h3", null, this.props.currentQuestion.q), 
+	                    React.createElement("p", null, JSON.stringify(this.props.results))
+	                   ), 
+
+	                   React.createElement(Display, {if: this.props.status === 'connected' && !this.props.currentQuestion}, 
+	                      React.createElement("p", null, "Awaiting Question.")
+	                   )
+
+	               )
+	           );
 	       }
 	    });
 
