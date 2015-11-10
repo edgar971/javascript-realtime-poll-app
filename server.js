@@ -91,7 +91,7 @@ io.sockets.on('connection', function(socket){
     socket.on('answer', function(data){
         results[data.choice] ++;
         io.sockets.emit('results', results);
-        console.log("Answer: %s - %i", data.choice, results);
+        console.log("Answered: %s - %s", data.choice, results);
     });
     //emit a connection
     socket.emit('welcome', {

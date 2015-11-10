@@ -84,9 +84,13 @@ APP = React.createClass({
         this.setState(presentation);
     },
     ask(question) {
-        console.log('Setting the state:', question);
         sessionStorage.answer = '';
-        this.setState({currentQuestion : question});
+        this.setState(
+            {
+                currentQuestion : question,
+                results: {a:0, b:0,c:0,d:0}
+            }
+        );
 
     },
     updateResults(data) {
