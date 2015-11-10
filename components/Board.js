@@ -5,6 +5,7 @@ var React = require('react'),
 
 Board = React.createClass({
         barGraphData(results) {
+
             var graphData = [
                 {
                     "name": "Answers",
@@ -15,14 +16,8 @@ Board = React.createClass({
             Object.keys(results).map(function(choice){
                 graphData[0].values.push({ "x": choice, "y":  results[choice]});
             });
-            console.log(graphData);
-
 
             return graphData;
-
-            //return Object.keys(results).map(function(choice){
-            //    return
-            //});
 
         },
         render() {

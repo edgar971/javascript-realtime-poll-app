@@ -30693,15 +30693,15 @@
 
 	Board = React.createClass({displayName: "Board",
 	        barGraphData:function(results) {
-	            var graphData = [
+	            var graphData =
 	                {
 	                    "name": "Answers",
 	                    "values": []
 	                }
 
-	            ];
+	            ;
 	            Object.keys(results).map(function(choice){
-	                graphData[0].values.push({ "x": choice, "y":  results[choice]});
+	                graphData.values.push({ "x": choice, "y":  results[choice]});
 	            });
 	            console.log(graphData);
 
