@@ -1,14 +1,27 @@
+var webpack = require('webpack');
+
 module.exports = {
-    entry: './client.js',
+    entry: [
+        'babel-polyfill',
+        './client.js'
+    ],
     output: {
         filename: 'public/js/bundle.js'
     },
+    debug:true,
+    devtool: 'source-map',
     module: {
         loaders: [
             {
+                test: /\.js$/,
                 exclude: /(node_modules|server.js)/,
-                loader: 'jsx-loader?insertPragma=React.DOM&harmony'
-            }
+                loader: 'babel-loader',
+                query: {
+                    plugins: ['transform-runtime'],
+                    presets: ['es2015', 'react']
+                }
+            },
+
         ]
     }
 }

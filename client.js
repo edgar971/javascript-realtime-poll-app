@@ -1,21 +1,19 @@
 /**
  * Created by edgar971 on 11/3/15.
  */
-var React = require('react'),
-    APP = require('./components/APP'),
-    ReactDOM = require('react-dom'),
-    Router = require('react-router'),
-    Route = Router.Route,
-    DefaultRoute = Router.DefaultRoute,
-    NotFoundRoute = Router.NotFoundRoute,
-    Audience = require('./components/Audience'),
-    Speaker = require('./components/Speaker'),
-    Board = require('./components/Board'),
-    Page404 = require('./components/Page404'),
-    routes;
+import React from 'react'
+import APP from './components/APP'
+import ReactDOM from 'react-dom'
+import Router from 'react-router'
+import Audience from './components/Audience'
+import Speaker from './components/Speaker'
+import Board from './components/Board'
+import Page404 from './components/Page404'
+
+var { Route, DefaultRoute, NotFoundRoute} = Router;
 
 
-routes = (
+var routes = (
     <Route handler={APP}>
         <DefaultRoute handler={Audience}/>
         <Route name="speaker" path="speaker" handler={Speaker}></Route>

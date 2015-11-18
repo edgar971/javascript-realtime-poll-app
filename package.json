@@ -11,6 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "babel-loader": "^6.0.1",
+    "babel-plugin-transform-runtime": "^6.1.18",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-react": "^6.1.18",
     "jsx-loader": "^0.13.2",
     "react": "^0.14.2",
     "react-hot-loader": "^1.3.0",
@@ -19,6 +22,10 @@
     "webpack-dev-server": "^1.12.1"
   },
   "dependencies": {
+    "babel-loader": "^6.1.0",
+    "babel-polyfill": "^6.1.19",
+    "babel-runtime": "^6.1.18",
+    "coffee-loader": "^0.7.2",
     "react-d3": "^0.4.0",
     "react-router": "^0.13.5",
     "socket.io": "^1.3.7",
