@@ -1,17 +1,10 @@
 /**
  * Created by edgar971 on 11/3/15.
  */
-var React = require('react');
+import React from 'react'
 
-var Header = React.createClass({
-    propTypes: {
-        title: React.PropTypes.string.isRequired
-    },
-    getDefaultProps() {
-        return {
-            status: 'disconnected'
-        }
-    },
+class Header extends React.Component {
+
     render() {
         return(
             <header>
@@ -28,6 +21,11 @@ var Header = React.createClass({
             </header>
         )
     }
-});
-
+};
+Header.propTypes = {
+    title: React.PropTypes.string.isRequired
+};
+Header.getDefaultProps = {
+    status: 'disconnected'
+};
 module.exports = Header;

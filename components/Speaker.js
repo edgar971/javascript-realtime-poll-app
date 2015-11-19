@@ -1,11 +1,10 @@
-var React = require('react'),
-    Display = require('./parts/Display'),
-    JoinSpeaker = require('./parts/JoinSpeaker'),
-    Attendance = require('./parts/Attendance'),
-    Questions = require('./parts/Questions'),
-    Speaker;
+import React from 'react'
+import Display from './parts/Display'
+import JoinSpeaker from './parts/JoinSpeaker'
+import Attendance from './parts/Attendance'
+import Questions from './parts/Questions'
 
-Speaker = React.createClass({
+class Speaker extends React.Component {
        render() {
            return (
                <section className="container">
@@ -22,7 +21,7 @@ Speaker = React.createClass({
                </section>
            );
        }
-    });
+    };
 
 
 module.exports = Speaker;
